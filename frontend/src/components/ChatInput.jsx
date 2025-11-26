@@ -1,15 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiSend, FiPaperclip, FiMic } from 'react-icons/fi';
+import { FiSend, FiPaperclip, FiMic, FiPlus } from 'react-icons/fi';
 
 export default function ChatInput({ onSend, loading, onFocusChange, compact = false }) {
   const [message, setMessage] = useState('');
+  const [attachments, setAttachments] = useState([]);
+  const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() && !loading) {
-      onSend(message);
+      const filesMeta = attachments.map((f) => ({
+        name: f.name,
+        size: f.size,
+        type: f.type,
+      }));
+      onSend(message, filesMeta);
       setMessage('');
+      setAttachments([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -36,6 +47,17 @@ export default function ChatInput({ onSend, loading, onFocusChange, compact = fa
     onFocusChange?.(false);
   };
 
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    setAttachments(files);
+  };
+
+  const handleOpenFilePicker = () => {
+    if (!loading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div className={`transition-all duration-200 ${compact ? 'w-full' : 'w-full'}`}>
       <form onSubmit={handleSubmit} className="relative">
@@ -47,6 +69,23 @@ export default function ChatInput({ onSend, loading, onFocusChange, compact = fa
               ? 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 shadow-sm' 
               : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl p-2 shadow-sm'
           }`}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            <button
+              type="button"
+              onClick={handleOpenFilePicker}
+              className="mr-2 flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+              title="Add attachments"
+            >
+              <FiPlus className="h-4 w-4" />
+            </button>
+
             <input
               type="text"
               value={message}
@@ -60,25 +99,6 @@ export default function ChatInput({ onSend, loading, onFocusChange, compact = fa
               }`}
               disabled={loading}
             />
-            
-            {!compact && (
-              <div className="flex items-center space-x-1 pr-1">
-                <button
-                  type="button"
-                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                  title="Attach file"
-                >
-                  <FiPaperclip className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                  title="Voice input"
-                >
-                  <FiMic className="h-4 w-4" />
-                </button>
-              </div>
-            )}
             
             <button
               type="submit"

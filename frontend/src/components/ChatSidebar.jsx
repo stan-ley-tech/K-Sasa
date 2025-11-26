@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { FiPlus, FiGlobe, FiFileText, FiClock } from 'react-icons/fi';
 
-const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOpenECitizen, onOpenForms }) => {
+const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOpenECitizen, onOpenForms, collapsed, onToggleCollapsed }) => {
   const [historyOpen, setHistoryOpen] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className={`sidebar ${collapsed ? 'w-16' : 'w-64'}`}>
+    <div className={`h-full flex flex-col transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
       {/* Logo + collapse toggle */}
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-            <span className="text-sm font-bold text-blue-600">KS</span>
+          <div className={`rounded-full bg-blue-100 flex items-center justify-center ${collapsed ? 'w-10 h-10' : 'w-8 h-8'}`}>
+            <span className={`font-bold text-blue-600 ${collapsed ? 'text-base' : 'text-sm'}`}>KS</span>
           </div>
           {!collapsed && (
             <span className="font-semibold text-gray-800">K-Sasa</span>
@@ -18,8 +17,8 @@ const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOp
         </div>
         <button
           type="button"
-          onClick={() => setCollapsed((v) => !v)}
-          className="ml-2 text-xs text-gray-500 hover:text-gray-700"
+          onClick={onToggleCollapsed}
+          className="ml-2 flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-lg"
         >
           {collapsed ? '›' : '‹'}
         </button>
@@ -29,26 +28,16 @@ const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOp
       <div className="p-4 border-b border-gray-200 space-y-2">
         <button
           onClick={onNewChat}
-          className={`w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md font-medium flex items-center ${
+          className={`w-full border border-gray-300 hover:border-gray-400 text-gray-800 bg-white hover:bg-gray-50 py-2 px-4 rounded-md font-medium flex items-center ${
             collapsed ? 'justify-center' : 'justify-center space-x-2'
           } transition-colors`}
           type="button"
         >
-          <FiPlus className="h-4 w-4" />
+          <FiPlus className="h-5 w-5" />
           {!collapsed && <span>New Chat</span>}
         </button>
 
         <nav className="space-y-1">
-          <button
-            onClick={onOpenECitizen}
-            className={`w-full text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 text-gray-700 flex items-center ${
-              collapsed ? 'justify-center' : 'space-x-2'
-            }`}
-            type="button"
-          >
-            <FiGlobe className="h-4 w-4 text-gray-500" />
-            {!collapsed && <span>E-Citizen</span>}
-          </button>
           <button
             onClick={onOpenForms}
             className={`w-full text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 text-gray-700 flex items-center ${
@@ -56,8 +45,8 @@ const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOp
             }`}
             type="button"
           >
-            <FiFileText className="h-4 w-4 text-gray-500" />
-            {!collapsed && <span>Forms</span>}
+            <FiFileText className={`text-gray-500 ${collapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
+            {!collapsed && <span>Gava Hub</span>}
           </button>
           <button
             onClick={() => setHistoryOpen((v) => !v)}
@@ -66,7 +55,7 @@ const ChatSidebar = ({ conversations = [], onSelectConversation, onNewChat, onOp
             }`}
             type="button"
           >
-            <FiClock className="h-4 w-4 text-gray-500" />
+            <FiClock className={`text-gray-500 ${collapsed ? 'h-6 w-6' : 'h-4 w-4'}`} />
             {!collapsed && <span>History</span>}
           </button>
           {!collapsed && historyOpen && (

@@ -4,7 +4,7 @@ import ChatWindow from './components/ChatWindow';
 import ChatInput from './components/ChatInput';
 import ChatSidebar from './components/ChatSidebar';
 import FormsPanel from './components/FormsPanel';
-import ECitizenPanel from './components/ECitizenPanel';
+import GovernmentHub from './components/GovernmentHub';
 import { agentAsk } from './utils/api';
 import { detectLanguage, normalizeLanguageForReply, mapShengToReplyCode, routeDomain } from './utils/lang';
 
@@ -31,8 +31,9 @@ export default function App() {
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [activeView, setActiveView] = useState('chat'); // chat | forms | ecitizen
+  const [activeView, setActiveView] = useState('chat'); // chat | forms | govhub
   const userId = getUserId();
 
   // Toggle dark mode
@@ -84,7 +85,7 @@ export default function App() {
     });
   }, [messages, currentConversation]);
 
-  const onSend = async (text) => {
+  const onSend = async (text, filesMeta = []) => {
     if (!text.trim()) return;
     
     const userMessage = { role: 'user', text };
@@ -157,7 +158,8 @@ export default function App() {
         channel: 'web', 
         domain: routedDomain, 
         prompt: text, 
-        context 
+        context,
+        attachments: filesMeta,
       });
       
       // Wrap reply in required output structure
@@ -247,29 +249,28 @@ export default function App() {
 
   // Sidebar action handlers (History is inline in sidebar)
   const handleOpenForms = () => {
-    setActiveView('forms');
+    setActiveView('govhub');
     setSidebarOpen(false);
   };
   const handleOpenECitizen = () => {
-    setActiveView('ecitizen');
     setSidebarOpen(false);
   };
 
   return (
     <div className="flex h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      {/* Mobile sidebar toggle */}
+      {/* Sidebar toggle (mobile) */}
       <button 
-        className="md:hidden fixed top-4 left-4 z-20 p-2 rounded-md bg-white dark:bg-gray-800 shadow-md"
+        className="fixed top-4 left-4 z-30 flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 md:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
-        {sidebarOpen ? <FiX /> : <FiMenu />}
+        {sidebarOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
       </button>
 
       {/* Sidebar */}
       <div className={`
-        fixed md:static z-10 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        hidden md:block h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+        ${sidebarCollapsed ? 'w-16' : 'w-64'}
+        transition-all duration-300 ease-in-out
       `}>
         <ChatSidebar
           conversations={conversations}
@@ -277,6 +278,8 @@ export default function App() {
           onNewChat={startNewChat}
           onOpenForms={handleOpenForms}
           onOpenECitizen={handleOpenECitizen}
+          collapsed={sidebarCollapsed}
+          onToggleCollapsed={() => setSidebarCollapsed((v) => !v)}
         />
       </div>
 
@@ -321,8 +324,8 @@ export default function App() {
         {activeView === 'forms' && (
           <FormsPanel />
         )}
-        {activeView === 'ecitizen' && (
-          <ECitizenPanel />
+        {activeView === 'govhub' && (
+          <GovernmentHub />
         )}
       </div>
         
