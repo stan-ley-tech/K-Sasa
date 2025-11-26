@@ -1,0 +1,8 @@
+{
+  "fields": [
+    {"id": "business_name", "label": "Jina la Biashara", "type": "text", "required": true},
+    {"id": "owner_name", "label": "Jina la Mmiliki", "type": "text", "required": true},
+    {"id": "id_number", "label": "Nambari ya Kitambulisho", "type": "text", "required": true},
+    {"id": "address", "label": "Anwani", "type": "text", "required": true}
+  ]
+}

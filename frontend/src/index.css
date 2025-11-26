@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { 
+    height: 100%;
+  }
+  
+  body { 
+    @apply bg-gray-50 text-gray-900;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+  
+  /* Animation for message appearance */
+  @keyframes messageAppear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .message-enter {
+    animation: messageAppear 0.3s ease-out forwards;
+  }
+  
+  /* Grok-like chat styles */
+  .chat-container {
+    @apply flex h-screen bg-white;
+  }
+  
+  .sidebar {
+    @apply w-64 bg-gray-100 border-r border-gray-200 h-full overflow-y-auto;
+  }
+  
+  .chat-window {
+    @apply flex-1 flex flex-col h-full overflow-hidden;
+  }
+  
+  .message-bubble {
+    @apply max-w-3xl rounded-lg p-4 my-2 text-sm;
+  }
+  
+  .user-message {
+    @apply bg-blue-50 text-gray-800 ml-auto border border-blue-100;
+  }
+  
+  .ai-message {
+    @apply bg-white text-gray-800 mr-auto border border-gray-100 shadow-sm;
+  }
+  
+  .chat-input-container {
+    @apply p-4 border-t border-gray-200 bg-white;
+  }
+  
+  .chat-input {
+    @apply w-full rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-3 pr-10;
+  }
+  
+  .send-button {
+    @apply absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-600;
+  }
+}
