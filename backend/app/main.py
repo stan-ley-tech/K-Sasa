@@ -20,9 +20,14 @@ from app.telemetry import log_event, prompt_hash, record_request, snapshot_metri
 
 app = FastAPI(title="K-Sasa Backend", version="0.1.0")
 
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://frontend-glj5dzmqw-stanley-ochiengs-projects.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
